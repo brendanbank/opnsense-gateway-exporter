@@ -85,6 +85,11 @@ rcodes, query types, DNSSEC validation, and request list utilization.
 | `opnsense_unbound_unwanted_queries_total` | counter | — | Unwanted queries |
 | `opnsense_unbound_unwanted_replies_total` | counter | — | Unwanted replies |
 
+**Note:** By default, Unbound only exposes basic statistics (query counts, cache
+hits/misses, request list, recursion time). The memory, rcode, query type, opcode,
+DNSSEC, and unwanted traffic metrics require extended statistics to be enabled in
+**Services > Unbound DNS > Advanced > Extended Statistics**.
+
 ## Prerequisites
 
 - OPNsense 24.x or later
