@@ -12,4 +12,4 @@ Metrics exported:
   opnsense_gateway_loss_ratio    - packet loss ratio (0.0-1.0)
   opnsense_gateway_info          - informational metric with status/monitor labels
 
-WWW: https://github.com/bgwlan/opnsense-gateway-exporter
+WWW: https://github.com/brendanbank/opnsense-gateway-exporter
