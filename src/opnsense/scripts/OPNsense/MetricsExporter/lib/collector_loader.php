@@ -29,8 +29,9 @@
 /**
  * Discover collector classes from PHP files in a directory.
  *
- * Each file in $dir should define a class named ucfirst(basename) + "Collector".
- * For example, gateway.php should define GatewayCollector.
+ * Each file should be named after its class (e.g. GatewayCollector.php defines
+ * class GatewayCollector). The type key is derived by stripping the "Collector"
+ * suffix and lowercasing (e.g. "gateway").
  *
  * @param string $dir Path to the collectors directory
  * @return array Map of type => class name, e.g. ['gateway' => 'GatewayCollector']
@@ -38,15 +39,15 @@
 function load_collectors(string $dir): array
 {
     $collectors = [];
-    $files = glob($dir . '/*.php');
+    $files = glob($dir . '/*Collector.php');
 
     if ($files === false) {
         return $collectors;
     }
 
     foreach ($files as $file) {
-        $type = basename($file, '.php');
-        $class = ucfirst($type) . 'Collector';
+        $class = basename($file, '.php');
+        $type = strtolower(preg_replace('/Collector$/', '', $class));
 
         require_once $file;
 

@@ -21,8 +21,6 @@
             <ValidationMessage>Must be an absolute directory path ending in /. Path traversal (..) is not allowed.</ValidationMessage>
         </outputdir>
         <collectors type="TextField">
-            <Default></Default>
-            <Required>N</Required>
         </collectors>
     </items>
 </model>
