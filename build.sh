@@ -54,16 +54,14 @@ ssh "${FIREWALL}" "cd ${REMOTE_DIR}/${PLUGIN_SUBDIR} && sudo bmake package"
 # Find and download the .pkg file
 echo "==> Downloading package"
 mkdir -p "${SCRIPT_DIR}/${LOCAL_DIST}"
-scp -q "${FIREWALL}:${REMOTE_DIR}/${PLUGIN_SUBDIR}/work/pkg/*.pkg" "${SCRIPT_DIR}/${LOCAL_DIST}/"
-
-# Show result
-PKG_FILE=$(ls -1 "${SCRIPT_DIR}/${LOCAL_DIST}"/*.pkg 2>/dev/null | head -1)
-if [ -n "${PKG_FILE}" ]; then
-    echo "==> Package built successfully: ${PKG_FILE}"
-else
-    echo "ERROR: No .pkg file found" >&2
+PKG_NAME=$(ssh "${FIREWALL}" "ls -1 ${REMOTE_DIR}/${PLUGIN_SUBDIR}/work/pkg/*.pkg" 2>/dev/null | head -1)
+if [ -z "${PKG_NAME}" ]; then
+    echo "ERROR: No .pkg file found on remote" >&2
     exit 1
 fi
+scp -q "${FIREWALL}:${PKG_NAME}" "${SCRIPT_DIR}/${LOCAL_DIST}/"
+PKG_FILE="${SCRIPT_DIR}/${LOCAL_DIST}/$(basename "${PKG_NAME}")"
+echo "==> Package built successfully: ${PKG_FILE}"
 
 # Clean up remote build directory
 echo "==> Cleaning up remote build directory"
