@@ -54,6 +54,37 @@ so the collector uses `\OPNsense\Core\Backend` to call configd actions).
 | `opnsense_pf_state_removals_total` | counter | — | Total pf state table removals |
 | `opnsense_pf_counter_total` | counter | `name` | PF counter by type (match, bad-offset, fragment, short, normalize, memory, etc.) |
 
+### Unbound DNS (`unbound.prom`)
+
+Queries Unbound resolver statistics via configd (`unbound-control stats_noreset`).
+Covers query volume, cache performance, memory usage, recursion time, answer
+rcodes, query types, DNSSEC validation, and request list utilization.
+
+| Metric | Type | Labels | Description |
+|--------|------|--------|-------------|
+| `opnsense_unbound_queries_total` | counter | — | Total DNS queries received |
+| `opnsense_unbound_cache_hits_total` | counter | — | Total cache hits |
+| `opnsense_unbound_cache_misses_total` | counter | — | Total cache misses |
+| `opnsense_unbound_prefetch_total` | counter | — | Total prefetch actions |
+| `opnsense_unbound_recursive_replies_total` | counter | — | Total recursive replies |
+| `opnsense_unbound_answer_rcode_total` | counter | `rcode` | DNS answers by rcode (NOERROR, NXDOMAIN, SERVFAIL, etc.) |
+| `opnsense_unbound_query_type_total` | counter | `type` | DNS queries by type (A, AAAA, PTR, MX, etc.) |
+| `opnsense_unbound_query_opcode_total` | counter | `opcode` | DNS queries by opcode |
+| `opnsense_unbound_memory_bytes` | gauge | `cache`, `module`, or `type` | Memory usage by component |
+| `opnsense_unbound_requestlist_avg` | gauge | — | Average request list size |
+| `opnsense_unbound_requestlist_max` | gauge | — | Maximum request list size |
+| `opnsense_unbound_requestlist_overwritten_total` | counter | — | Overwritten request list entries |
+| `opnsense_unbound_requestlist_exceeded_total` | counter | — | Exceeded request list entries |
+| `opnsense_unbound_requestlist_current` | gauge | — | Current request list size |
+| `opnsense_unbound_recursion_time_avg_seconds` | gauge | — | Average recursion time |
+| `opnsense_unbound_recursion_time_median_seconds` | gauge | — | Median recursion time |
+| `opnsense_unbound_tcp_usage` | gauge | — | Current TCP buffer usage |
+| `opnsense_unbound_answer_secure_total` | counter | — | DNSSEC secure answers |
+| `opnsense_unbound_answer_bogus_total` | counter | — | DNSSEC bogus answers |
+| `opnsense_unbound_rrset_bogus_total` | counter | — | DNSSEC bogus RRsets |
+| `opnsense_unbound_unwanted_queries_total` | counter | — | Unwanted queries |
+| `opnsense_unbound_unwanted_replies_total` | counter | — | Unwanted replies |
+
 ## Prerequisites
 
 - OPNsense 24.x or later
@@ -122,7 +153,8 @@ src/
     ├── scripts/OPNsense/MetricsExporter/
     │   ├── collectors/
     │   │   ├── gateway.php                                 # Gateway metrics collector
-    │   │   └── pf.php                                      # PF/firewall metrics collector
+    │   │   ├── pf.php                                      # PF/firewall metrics collector
+    │   │   └── unbound.php                                 # Unbound DNS metrics collector
     │   ├── lib/
     │   │   ├── collector_loader.php                         # Collector auto-discovery
     │   │   └── prometheus.php                               # Prometheus helper (prom_escape)
