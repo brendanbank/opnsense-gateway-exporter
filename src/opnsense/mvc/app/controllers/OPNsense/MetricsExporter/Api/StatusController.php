@@ -1,4 +1,3 @@
-#!/usr/local/bin/php
 <?php
 
 /*
@@ -27,43 +26,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * Generate gateway exporter config file from OPNsense model/config.
- * Runs as root via configd before starting the unprivileged daemon.
- */
+namespace OPNsense\MetricsExporter\Api;
 
-require_once 'config.inc';
+use OPNsense\Base\ApiControllerBase;
+use OPNsense\Core\Backend;
 
-$mdl = new \OPNsense\GatewayExporter\GatewayExporter();
-
-$interval = (int)$mdl->interval->__toString();
-if ($interval < 5 || $interval > 300) {
-    $interval = 15;
-}
-
-$outputpath = $mdl->outputpath->__toString();
-if (empty($outputpath) || strpos($outputpath, '..') !== false) {
-    $outputpath = '/var/tmp/node_exporter/gateway.prom';
-}
-
-$config = [
-    'interval' => $interval,
-    'outputpath' => $outputpath,
-];
-
-// Write config file (readable by unprivileged daemon)
-$config_path = '/usr/local/etc/gateway_exporter.conf';
-file_put_contents($config_path, json_encode($config, JSON_PRETTY_PRINT) . "\n");
-chmod($config_path, 0644);
-
-// Ensure output directory exists and is writable by the daemon (runs as nobody)
-$output_dir = dirname($outputpath);
-if (!is_dir($output_dir)) {
-    mkdir($output_dir, 01777, true);
-} else {
-    // Ensure the daemon can write to the directory
-    $perms = fileperms($output_dir);
-    if (($perms & 0002) === 0) {
-        chmod($output_dir, $perms | 0003);
+class StatusController extends ApiControllerBase
+{
+    public function gatewayAction()
+    {
+        $backend = new Backend();
+        $response = json_decode(trim($backend->configdRun('metrics_exporter gateway-status')), true);
+        if ($response !== null) {
+            return $response;
+        }
+        return ['status' => 'error', 'message' => 'Unable to fetch gateway status'];
     }
 }

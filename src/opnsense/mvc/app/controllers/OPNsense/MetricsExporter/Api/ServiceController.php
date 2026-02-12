@@ -26,12 +26,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace OPNsense\GatewayExporter\Api;
+namespace OPNsense\MetricsExporter\Api;
 
-use OPNsense\Base\ApiMutableModelControllerBase;
+use OPNsense\Base\ApiMutableServiceControllerBase;
 
-class GeneralController extends ApiMutableModelControllerBase
+class ServiceController extends ApiMutableServiceControllerBase
 {
-    protected static $internalModelName = 'general';
-    protected static $internalModelClass = 'OPNsense\GatewayExporter\GatewayExporter';
+    protected static $internalServiceClass = '\OPNsense\MetricsExporter\MetricsExporter';
+    protected static $internalServiceEnabled = 'enabled';
+    protected static $internalServiceName = 'metrics_exporter';
 }

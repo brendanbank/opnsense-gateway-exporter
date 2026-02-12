@@ -1,15 +1,13 @@
-Prometheus exporter for OPNsense gateway metrics.
+Prometheus exporter for OPNsense metrics.
 
-Runs a daemon that polls dpinger gateway monitor sockets and writes
-Prometheus-format metrics to the node_exporter textfile collector
-directory. Exports gateway status, round-trip time, standard deviation,
-and packet loss for all configured gateways.
+Runs a daemon that collects OPNsense-specific metrics and writes them in
+Prometheus format to the node_exporter textfile collector directory.
 
-Metrics exported:
+Currently exports gateway metrics:
   opnsense_gateway_status        - numeric status (0=down, 1=up, 2=loss, 3=delay)
   opnsense_gateway_delay_seconds - round-trip time in seconds
   opnsense_gateway_stddev_seconds - RTT standard deviation in seconds
   opnsense_gateway_loss_ratio    - packet loss ratio (0.0-1.0)
   opnsense_gateway_info          - informational metric with status/monitor labels
 
-WWW: https://github.com/brendanbank/opnsense-gateway-exporter
+WWW: https://github.com/brendanbank/opnsense-metrics-exporter

@@ -1,9 +1,0 @@
-<menu>
-    <Services>
-        <GatewayExporter VisibleName="Gateway Exporter" cssClass="fa fa-line-chart">
-            <Settings order="10" url="/ui/gatewayexporter/general/index"/>
-            <Status order="20" url="/ui/gatewayexporter/status/index"/>
-            <LogFile VisibleName="Log File" order="30" url="/ui/diagnostics/log/gateway/exporter"/>
-        </GatewayExporter>
-    </Services>
-</menu>

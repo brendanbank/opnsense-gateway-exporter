@@ -1,6 +1,6 @@
 <script>
     $(document).ready(function() {
-        updateServiceControlUI('gatewayexporter');
+        updateServiceControlUI('metricsexporter');
 
         function escapeHtml(str) {
             return $('<span>').text(str).html();
@@ -26,7 +26,7 @@
 
         function loadStatus() {
             $("#btnRefreshProgress").addClass("fa-spinner fa-pulse");
-            ajaxCall("/api/gatewayexporter/status/gateway", {}, function(data, status) {
+            ajaxCall("/api/metricsexporter/status/gateway", {}, function(data, status) {
                 $("#gatewayTableBody").empty();
                 if (status == "success" && data['rows'] !== undefined) {
                     $.each(data['rows'], function(idx, gw) {
@@ -64,7 +64,7 @@
 
 <div class="alert alert-warning" role="alert" id="node_exporter_warning" style="display:none;">
     <b>{{ lang._('Warning:') }}</b>
-    {{ lang._('The Prometheus Exporter plugin (os-node_exporter) is not installed. The gateway exporter writes metrics to the node_exporter textfile collector directory, which requires os-node_exporter to be installed and enabled.') }}
+    {{ lang._('The Prometheus Exporter plugin (os-node_exporter) is not installed. The metrics exporter writes metrics to the node_exporter textfile collector directory, which requires os-node_exporter to be installed and enabled.') }}
 </div>
 
 <div class="content-box">

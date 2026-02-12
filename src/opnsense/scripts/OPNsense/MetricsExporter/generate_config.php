@@ -1,3 +1,4 @@
+#!/usr/local/bin/php
 <?php
 
 /*
@@ -26,13 +27,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace OPNsense\GatewayExporter\Api;
+/**
+ * Generate metrics exporter config file from OPNsense model/config.
+ * Runs as root via configd before starting the unprivileged daemon.
+ */
 
-use OPNsense\Base\ApiMutableServiceControllerBase;
+require_once 'config.inc';
 
-class ServiceController extends ApiMutableServiceControllerBase
-{
-    protected static $internalServiceClass = '\OPNsense\GatewayExporter\GatewayExporter';
-    protected static $internalServiceEnabled = 'enabled';
-    protected static $internalServiceName = 'gateway_exporter';
+$mdl = new \OPNsense\MetricsExporter\MetricsExporter();
+
+$interval = (int)$mdl->interval->__toString();
+if ($interval < 5 || $interval > 300) {
+    $interval = 15;
+}
+
+$outputpath = $mdl->outputpath->__toString();
+if (empty($outputpath) || strpos($outputpath, '..') !== false) {
+    $outputpath = '/var/tmp/node_exporter/gateway.prom';
+}
+
+$config = [
+    'interval' => $interval,
+    'outputpath' => $outputpath,
+];
+
+// Write config file (readable by unprivileged daemon)
+$config_path = '/usr/local/etc/metrics_exporter.conf';
+file_put_contents($config_path, json_encode($config, JSON_PRETTY_PRINT) . "\n");
+chmod($config_path, 0644);
+
+// Ensure output directory exists and is writable by the daemon (runs as nobody)
+$output_dir = dirname($outputpath);
+if (!is_dir($output_dir)) {
+    mkdir($output_dir, 01777, true);
+} else {
+    // Ensure the daemon can write to the directory
+    $perms = fileperms($output_dir);
+    if (($perms & 0002) === 0) {
+        chmod($output_dir, $perms | 0003);
+    }
 }

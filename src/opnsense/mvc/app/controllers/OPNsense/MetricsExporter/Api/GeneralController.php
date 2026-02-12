@@ -26,48 +26,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-function gateway_exporter_services()
+namespace OPNsense\MetricsExporter\Api;
+
+use OPNsense\Base\ApiMutableModelControllerBase;
+
+class GeneralController extends ApiMutableModelControllerBase
 {
-    $services = array();
-    $mdl = new \OPNsense\GatewayExporter\GatewayExporter();
-
-    if ($mdl->enabled->__toString() == "0") {
-        return $services;
-    }
-
-    $services[] = array(
-        'description' => gettext('Gateway Exporter'),
-        'configd' => array(
-            'restart' => array('gateway_exporter restart'),
-            'start' => array('gateway_exporter start'),
-            'stop' => array('gateway_exporter stop'),
-        ),
-        'name' => 'gateway_exporter',
-        'pidfile' => '/var/run/gateway_exporter.pid',
-    );
-
-    return $services;
-}
-
-function gateway_exporter_configure()
-{
-    return [
-        'bootup' => ['gateway_exporter_start:0'],
-    ];
-}
-
-function gateway_exporter_syslog()
-{
-    return [
-        'gateway_exporter' => ['facility' => ['gateway_exporter']],
-    ];
-}
-
-function gateway_exporter_start()
-{
-    $mdl = new \OPNsense\GatewayExporter\GatewayExporter();
-
-    if ($mdl->enabled->__toString() == "1") {
-        configd_run('gateway_exporter start');
-    }
+    protected static $internalModelName = 'general';
+    protected static $internalModelClass = 'OPNsense\MetricsExporter\MetricsExporter';
 }

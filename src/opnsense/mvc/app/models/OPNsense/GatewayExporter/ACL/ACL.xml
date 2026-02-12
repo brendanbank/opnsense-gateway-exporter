@@ -1,9 +1,0 @@
-<acl>
-    <page-services-gatewayexporter>
-        <name>Services: Gateway Exporter</name>
-        <patterns>
-            <pattern>ui/gatewayexporter/*</pattern>
-            <pattern>api/gatewayexporter/*</pattern>
-        </patterns>
-    </page-services-gatewayexporter>
-</acl>

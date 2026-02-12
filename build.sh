@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Build an OPNsense plugin package (.pkg) for os-gateway_exporter.
+# Build an OPNsense plugin package (.pkg) for os-metrics_exporter.
 #
 # Usage: ./build.sh [firewall-hostname]
 #
@@ -12,8 +12,8 @@
 set -e
 
 FIREWALL="${1:-${FIREWALL:?Set FIREWALL env var or pass hostname as argument}}"
-REMOTE_DIR="/tmp/gw_exporter_build"
-PLUGIN_SUBDIR="net-mgmt/gateway_exporter"
+REMOTE_DIR="/tmp/metrics_exporter_build"
+PLUGIN_SUBDIR="net-mgmt/metrics_exporter"
 LOCAL_DIST="dist"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
@@ -49,7 +49,7 @@ scp -rq "${SCRIPT_DIR}/src" "${FIREWALL}:${REMOTE_DIR}/${PLUGIN_SUBDIR}/"
 
 # Run the build
 echo "==> Running bmake package"
-ssh "${FIREWALL}" "cd ${REMOTE_DIR}/${PLUGIN_SUBDIR} && bmake package"
+ssh "${FIREWALL}" "cd ${REMOTE_DIR}/${PLUGIN_SUBDIR} && sudo bmake package"
 
 # Find and download the .pkg file
 echo "==> Downloading package"
@@ -67,6 +67,6 @@ fi
 
 # Clean up remote build directory
 echo "==> Cleaning up remote build directory"
-ssh "${FIREWALL}" "rm -rf ${REMOTE_DIR}"
+ssh "${FIREWALL}" "sudo rm -rf ${REMOTE_DIR}"
 
 echo "==> Done"

@@ -3,7 +3,7 @@
         <id>general.enabled</id>
         <label>Enabled</label>
         <type>checkbox</type>
-        <help>Enable the gateway exporter daemon.</help>
+        <help>Enable the metrics exporter daemon.</help>
     </field>
     <field>
         <id>general.interval</id>

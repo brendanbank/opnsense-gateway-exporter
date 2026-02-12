@@ -26,10 +26,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace OPNsense\GatewayExporter;
+namespace OPNsense\MetricsExporter;
 
-use OPNsense\Base\BaseModel;
+use OPNsense\Base\IndexController;
 
-class GatewayExporter extends BaseModel
+class GeneralController extends IndexController
 {
+    public function indexAction()
+    {
+        $this->view->pick('OPNsense/MetricsExporter/general');
+        $this->view->generalForm = $this->getForm("general");
+    }
 }

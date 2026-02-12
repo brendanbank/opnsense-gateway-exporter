@@ -26,7 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace OPNsense\GatewayExporter;
+namespace OPNsense\MetricsExporter;
 
 use OPNsense\Base\IndexController;
 
@@ -34,6 +34,6 @@ class StatusController extends IndexController
 {
     public function indexAction()
     {
-        $this->view->pick('OPNsense/GatewayExporter/status');
+        $this->view->pick('OPNsense/MetricsExporter/status');
     }
 }

@@ -26,20 +26,48 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace OPNsense\GatewayExporter\Api;
-
-use OPNsense\Base\ApiControllerBase;
-use OPNsense\Core\Backend;
-
-class StatusController extends ApiControllerBase
+function metrics_exporter_services()
 {
-    public function gatewayAction()
-    {
-        $backend = new Backend();
-        $response = json_decode(trim($backend->configdRun('gateway_exporter gateway-status')), true);
-        if ($response !== null) {
-            return $response;
-        }
-        return ['status' => 'error', 'message' => 'Unable to fetch gateway status'];
+    $services = array();
+    $mdl = new \OPNsense\MetricsExporter\MetricsExporter();
+
+    if ($mdl->enabled->__toString() == "0") {
+        return $services;
+    }
+
+    $services[] = array(
+        'description' => gettext('Metrics Exporter'),
+        'configd' => array(
+            'restart' => array('metrics_exporter restart'),
+            'start' => array('metrics_exporter start'),
+            'stop' => array('metrics_exporter stop'),
+        ),
+        'name' => 'metrics_exporter',
+        'pidfile' => '/var/run/metrics_exporter.pid',
+    );
+
+    return $services;
+}
+
+function metrics_exporter_configure()
+{
+    return [
+        'bootup' => ['metrics_exporter_start:0'],
+    ];
+}
+
+function metrics_exporter_syslog()
+{
+    return [
+        'metrics_exporter' => ['facility' => ['metrics_exporter']],
+    ];
+}
+
+function metrics_exporter_start()
+{
+    $mdl = new \OPNsense\MetricsExporter\MetricsExporter();
+
+    if ($mdl->enabled->__toString() == "1") {
+        configd_run('metrics_exporter start');
     }
 }
