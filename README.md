@@ -99,7 +99,7 @@ DNSSEC, and unwanted traffic metrics require extended statistics to be enabled i
 
 Collectors are auto-discovered PHP files in `collectors/`. To add a new one:
 
-1. Create `src/opnsense/scripts/OPNsense/MetricsExporter/collectors/<name>.php`
+1. Create `src/opnsense/scripts/OPNsense/MetricsExporter/collectors/<Name>Collector.php`
 2. Define a class `<Name>Collector` with these static methods:
    - `name(): string` — human-readable name for the UI
    - `defaultEnabled(): bool` — whether enabled by default on fresh install
@@ -157,9 +157,9 @@ src/
     │       └── status.volt                                 # Status page
     ├── scripts/OPNsense/MetricsExporter/
     │   ├── collectors/
-    │   │   ├── gateway.php                                 # Gateway metrics collector
-    │   │   ├── pf.php                                      # PF/firewall metrics collector
-    │   │   └── unbound.php                                 # Unbound DNS metrics collector
+    │   │   ├── GatewayCollector.php                        # Gateway metrics collector
+    │   │   ├── PfCollector.php                             # PF/firewall metrics collector
+    │   │   └── UnboundCollector.php                        # Unbound DNS metrics collector
     │   ├── lib/
     │   │   ├── collector_loader.php                         # Collector auto-discovery
     │   │   └── prometheus.php                               # Prometheus helper (prom_escape)
@@ -221,6 +221,81 @@ configctl metrics_exporter collector-status
 # List registered services
 pluginctl -s | grep metrics
 ```
+
+## Upstream Submission
+
+This plugin has been submitted as a PR to the official
+[opnsense/plugins](https://github.com/opnsense/plugins) repository, targeting
+`sysutils/metrics_exporter/` (alongside `node_exporter`).
+
+### Preparing the submission
+
+1. Fork [opnsense/plugins](https://github.com/opnsense/plugins) and clone it:
+
+   ```sh
+   gh repo fork opnsense/plugins --clone
+   ```
+
+2. Sync with upstream and create a branch:
+
+   ```sh
+   cd plugins
+   git fetch upstream
+   git checkout master && git merge upstream/master --ff-only
+   git checkout -b add-metrics-exporter
+   ```
+
+3. Copy plugin files (only `Makefile`, `pkg-descr`, and `src/` — no dev
+   artifacts like `build.sh`, `dist/`, `README.md`, `.gitignore`):
+
+   ```sh
+   mkdir -p sysutils/metrics_exporter
+   cp -r /path/to/opnsense-metrics-exporter/{Makefile,pkg-descr,src} sysutils/metrics_exporter/
+   ```
+
+4. Commit and push:
+
+   ```sh
+   git add sysutils/metrics_exporter/
+   git commit -m "sysutils/metrics_exporter: add Prometheus metrics exporter plugin"
+   git push -u origin add-metrics-exporter
+   ```
+
+### Verification
+
+Before submitting, the plugin was verified on an OPNsense 26.1.1 box
+(`casa.bgwlan.nl`). The opnsense/plugins fork and opnsense/core repos were
+cloned to the firewall (core is needed for the `lint` and `style` Makefile
+targets):
+
+```sh
+git clone --branch add-metrics-exporter https://github.com/brendanbank/plugins.git
+git clone --depth 1 https://github.com/opnsense/core.git
+cd plugins/sysutils/metrics_exporter
+```
+
+All three checks passed:
+
+```
+$ make lint      # PHP lint, model validation, class-filename match, executable permissions
+$ make style     # PSR-12 coding standard
+$ sudo make package  # Full package build
+>>> Staging files for os-metrics_exporter-devel-1.1... done
+>>> Packaging files for os-metrics_exporter-devel-1.1:
+```
+
+### Lint fixes applied
+
+The upstream `make lint` caught several issues that were fixed before submission:
+
+- **Model XML** (`MetricsExporter.xml`): removed redundant `<Default></Default>`
+  and `<Required>N</Required>` from the `collectors` field (these are implicit
+  defaults in the OPNsense model framework)
+- **Collector filenames**: renamed `gateway.php` → `GatewayCollector.php`,
+  `pf.php` → `PfCollector.php`, `unbound.php` → `UnboundCollector.php` to match
+  their class names (required by the `class-filename` lint check)
+- **Collector loader**: updated `collector_loader.php` to derive the type key
+  from the new filenames (strip `Collector` suffix, lowercase)
 
 ## License
 
