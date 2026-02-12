@@ -33,8 +33,6 @@
  */
 
 require_once 'config.inc';
-require_once 'util.inc';
-require_once 'interfaces.inc';
 
 $mdl = new \OPNsense\GatewayExporter\GatewayExporter();
 
@@ -51,23 +49,7 @@ if (empty($outputpath) || strpos($outputpath, '..') !== false) {
 $config = [
     'interval' => $interval,
     'outputpath' => $outputpath,
-    'gateways' => [],
 ];
-
-// Cache gateway configuration so the daemon doesn't need config.xml access
-$gateways = (new \OPNsense\Routing\Gateways())->gatewaysIndexedByName();
-foreach ($gateways as $name => $gw) {
-    $config['gateways'][$name] = [
-        'description' => !empty($gw['descr']) ? $gw['descr'] : $name,
-        'monitor' => $gw['monitor'] ?? '',
-        'force_down' => !empty($gw['force_down']),
-        'monitor_disable' => !empty($gw['monitor_disable']),
-        'latencyhigh' => isset($gw['current_latencyhigh']) ? (float)$gw['current_latencyhigh'] : null,
-        'latencylow' => isset($gw['current_latencylow']) ? (float)$gw['current_latencylow'] : null,
-        'losshigh' => isset($gw['current_losshigh']) ? (float)$gw['current_losshigh'] : null,
-        'losslow' => isset($gw['current_losslow']) ? (float)$gw['current_losslow'] : null,
-    ];
-}
 
 // Write config file (readable by unprivileged daemon)
 $config_path = '/usr/local/etc/gateway_exporter.conf';

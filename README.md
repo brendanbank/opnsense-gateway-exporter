@@ -41,18 +41,18 @@ carries `status` (text) and `monitor` (monitor IP) labels.
 
 ## Security
 
-The daemon runs as `nobody` (unprivileged) rather than root. This is achieved by
-splitting configuration into two phases:
+Exporter configuration is split into two phases:
 
-1. **`generate_config.php`** runs as root via configd, reads `config.xml` and
-   gateway settings, and writes a JSON config file to `/usr/local/etc/gateway_exporter.conf`
-2. **`gateway_exporter.php`** runs as `nobody`, reads the JSON config, and talks
-   to dpinger unix sockets directly (which are world-accessible)
+1. **`generate_config.php`** runs as root via configd, reads the OPNsense model,
+   and writes a JSON config file to `/usr/local/etc/gateway_exporter.conf`
+2. **`gateway_exporter.php`** reads the JSON config for exporter settings and uses
+   the OPNsense gateway API (`return_gateways_status`, `gatewaysIndexedByName`) for metric
+   collection, ensuring compatibility with future dpinger changes
 
 On reconfigure (settings save), configd regenerates the config file and sends
 SIGHUP to the daemon.
 
-Additional hardening:
+Hardening:
 - Output path validated with strict regex (absolute path, `.prom` extension, no `..`)
 - Path traversal blocked at both model and daemon level
 - Atomic file writes with `0644` permissions
