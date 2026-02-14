@@ -9,6 +9,19 @@ WWW: https://github.com/brendanbank/opnsense-metrics-exporter
 Changelog
 ---------
 
+1.3
+
+* Run daemon as unprivileged nobody user (daemon -u nobody)
+* Rewrite GatewayCollector to use configd Backend instead of PHP gateway API
+* Replace config.inc with minimal autoloader to avoid config.xml dependency
+* Fix .prom file ownership on upgrade from versions that ran as root
+
+1.2
+
+* Build non-devel packages
+* Translate gateway status to human-readable labels
+* Fix stale gateway config in long-running daemon
+
 1.1
 
 * Modular collector architecture with auto-discovery
