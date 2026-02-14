@@ -144,7 +144,6 @@ class GatewayCollector
 
             if (!empty($gateways_status[$gname])) {
                 $gs = $gateways_status[$gname];
-                $entry['status_text'] = $gs['status'];
                 $entry['monitor'] = $gs['monitor'] !== '~' ? $gs['monitor'] : '';
 
                 $delay_ms = 0.0;
@@ -168,22 +167,31 @@ class GatewayCollector
                 switch ($gs['status']) {
                     case 'none':
                         $entry['status_num'] = 1;
+                        $entry['status_text'] = 'online';
                         break;
                     case 'down':
+                        $entry['status_num'] = 0;
+                        $entry['status_text'] = 'down';
+                        break;
                     case 'force_down':
                         $entry['status_num'] = 0;
+                        $entry['status_text'] = 'force_down';
                         break;
                     case 'loss':
                         $entry['status_num'] = 2;
+                        $entry['status_text'] = 'loss';
                         break;
                     case 'delay':
                         $entry['status_num'] = 3;
+                        $entry['status_text'] = 'delay';
                         break;
                     case 'delay+loss':
                         $entry['status_num'] = 4;
+                        $entry['status_text'] = 'delay+loss';
                         break;
                     default:
                         $entry['status_num'] = 5;
+                        $entry['status_text'] = 'unknown';
                         break;
                 }
             } else {
