@@ -51,7 +51,7 @@ ssh "${FIREWALL}" "rm -rf ${REMOTE_PLUGIN_DIR}/work"
 
 # Build the package
 echo "==> Running make package"
-ssh "${FIREWALL}" "cd ${REMOTE_PLUGIN_DIR} && make package"
+ssh "${FIREWALL}" "cd ${REMOTE_PLUGIN_DIR} && make PLUGIN_DEVEL= package"
 
 # Find the built .pkg
 PKG_NAME=$(ssh "${FIREWALL}" "ls -1 ${REMOTE_PLUGIN_DIR}/work/pkg/*.pkg 2>/dev/null | head -1")
